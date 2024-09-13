@@ -19,6 +19,17 @@ public class AuthController : ControllerBase
         var user = Authenticate(login);
         if (user != null) {
             var token = GenerateToken(user);
+
+            var cookiesOption = new CookieOptions
+            {
+                HttpOnly = true,
+                //Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(1)
+            };
+
+            Response.Cookies.Append("CookieLogin", token, cookiesOption);
+            
             return Ok(new {token});
         }
 
@@ -68,3 +79,4 @@ public class AuthController : ControllerBase
     }
 
 }
+
